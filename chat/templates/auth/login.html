@@ -1,0 +1,65 @@
+{% extends 'app/base.html' %}
+{% load static %}
+{% block body %}
+<style>
+    a{text-decoration: none;}
+</style>
+    <div class="container mt-3" >
+        <div class="row">
+            <div class="col-md-4"></div>
+            <div class="col-md-4">
+                <h1 class="text-center text-success" style="margin-top: 100px;">Login</h1>
+                {% if messages %}
+                    {% for message in messages %}
+                        <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
+                            {{ message }}
+                            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                        </div>
+                    {% endfor %}
+                {% endif %}
+                <form action="" method="POST">
+                    {% csrf_token %}
+                    
+                    <br/>
+
+                    <label for="email">Email</label>
+                    <div class="form-group">
+                        <input type="email"
+                        name="email"
+                        class="form-control p-2 mb-3"
+                        id="email"
+                        placeholder="Enter email"
+                        required>
+                    </div>
+
+                    <label for="pasword">Password</label>
+                    <div class="form-group">
+                        <input type="password"
+                        name="pasw"
+                        class="form-control p-2 mb-3"
+                        id="pasw"
+                        placeholder="Enter password"
+                        required>
+                    </div>
+
+                    <br/>
+                    <div class="d-grid gap-2 mb-3">
+                        <button type="submit" class="btn btn-success get-started-btn">Login</button>
+                    </div>
+
+                    <br/>
+                    <div class="d-flex justify-content-between">
+                        <div>
+                            New user? <a href="/auth/signup">Signup</a>
+                        </div>
+                        <div>
+                            <a href="{% url 'auth:password_reset_request' %}" class="text-decoration-none">Forgot password</a>
+                        </div>
+                    </div>
+                </form>
+            </div>
+
+            <div class="col-md-4"></div>
+        </div>
+    </div>
+{% endblock body %}

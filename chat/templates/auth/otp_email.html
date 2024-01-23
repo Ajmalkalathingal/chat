@@ -1,0 +1,33 @@
+{% extends 'app/base.html' %}
+{% load static %}
+{% block body %}
+
+<div class="container mt-3">
+    <div class="row">
+        <div class="col-md-4"></div>
+        <div class="col-md-4">
+            <h1 class="text-center text-success">OTP Verification </h1>
+            {% if messages %}
+                {% for message in messages %}
+                    <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
+                        {{ message }}
+                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                    </div>
+                {% endfor %}
+            {% endif %}
+
+            <form method="post" action="{% url 'auth:login_otp' %}">
+                {% csrf_token %}
+                <div class="mb-3">
+                    <label for="otp" class="form-label">Enter OTP</label>
+                    <input type="text" class="form-control" id="otp" name="otp" value="{{ entered_otp }}" required>
+                </div>
+                <button type="submit" class="btn btn-primary">Submit OTP</button>
+            </form>
+        </div>
+
+        <div class="col-md-4"></div>
+    </div>
+
+</div>
+{% endblock body %}

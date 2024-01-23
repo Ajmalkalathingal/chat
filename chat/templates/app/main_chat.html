@@ -1,0 +1,193 @@
+{% extends 'app/base.html' %}
+{% load static %}
+
+{% block title %}WhatsApp{% endblock %}
+
+{% block css %}
+<link rel="stylesheet" href="{% static 'css/index.css' %}">
+{% endblock %}
+
+{% block body %}
+<div class="container-fluid back-container">
+    <div class=" front-container1 container">
+        <div class="row chat-top mt-5">
+            <div class="col-md-4 border-right border-secondary d-flex justify-content-between align-items-center">
+                <!-- Left side: User name and image -->
+                <div class="d-flex align-items-center">
+                    <img src="{% static 'assets/dp.png' %}" alt="" class="profile-image rounded-circle">
+                    <span class="ml-2">{{request.user.last_name}}</span><a href="{% url 'auth:logout' %}">log out</a>
+                </div>
+            
+                <!-- Right side: Notification icons -->
+                <div class="float-right">
+                    <!-- <div class="notification"> -->
+                        <!-- <i class="fa fa-bell-o" ></i> -->
+                        <!-- <span class="badge" id="count_badge"></span> -->
+                    <!-- </div> -->
+                    <svg width="1em" height="1em" viewBox="0 0 16 16" class="bi bi-chat-left-fill mx-3"
+                        fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+                        <path fill-rule="evenodd"
+                            d="M2 0a2 2 0 0 0-2 2v12.793a.5.5 0 0 0 .854.353l2.853-2.853A1 1 0 0 1 4.414 12H14a2 2 0 0 0 2-2V2a2 2 0 0 0-2-2H2z" />
+                    </svg>
+                    <svg width="1em" height="1em" viewBox="0 0 16 16" class="bi bi-chat-left-fill mx-3"
+                        fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+                        <path fill-rule="evenodd"
+                            d="M2 0a2 2 0 0 0-2 2v12.793a.5.5 0 0 0 .854.353l2.853-2.853A1 1 0 0 1 4.414 12H14a2 2 0 0 0 2-2V2a2 2 0 0 0-2-2H2z" />
+                    </svg>
+                    <svg width="1em" height="1em" viewBox="0 0 16 16" class="bi bi-three-dots-vertical mr-2"
+                        fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+                        <path fill-rule="evenodd"
+                            d="M9.5 13a1.5 1.5 0 1 1-3 0 1.5 1.5 0 0 1 3 0zm0-5a1.5 1.5 0 1 1-3 0 1.5 1.5 0 0 1 3 0zm0-5a1.5 1.5 0 1 1-3 0 1.5 1.5 0 0 1 3 0z" />
+                    </svg>
+                </div>
+            </div>
+            
+            <div class="col-md-1"></div>
+
+            <div class="col-md-7 ml-5  d-flex justify-content-between text-center">
+                <div class="d-flex align-items-center">
+                    <img src="{% static 'assets/dp.png' %}" alt="" class="profile-image rounded-circle">
+                    <span class="ml-2">{{user.last_name}}</span>
+                {% if user.userprofile.online_status %}
+                <small style="padding-left: 20px;" id="{{user.username}}online">Online</small>
+                {% else %}
+                <small style="padding-left: 20px;" id="{{user.username}}online">Offline</small>
+                {% endif %}
+                </div>
+                <div class="d-flex align-items-center">
+                    <span class="mr-2">
+                        <svg width="1em" height="1em" viewBox="0 0 16 16" class="bi bi-search" fill="currentColor"
+                            xmlns="http://www.w3.org/2000/svg">
+                            <path fill-rule="evenodd"
+                                d="M10.442 10.442a1 1 0 0 1 1.415 0l3.85 3.85a1 1 0 0 1-1.414 1.415l-3.85-3.85a1 1 0 0 1 0-1.415z" />
+                            <path fill-rule="evenodd"
+                                d="M6.5 12a5.5 5.5 0 1 0 0-11 5.5 5.5 0 0 0 0 11zM13 6.5a6.5 6.5 0 1 1-13 0 6.5 6.5 0 0 1 13 0z" />
+                        </svg>
+                    </span>
+                    <span>
+                        <svg width="1em" height="1em" viewBox="0 0 16 16" class="bi bi-three-dots-vertical mx-3"
+                            fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+                            <path fill-rule="evenodd"
+                                d="M9.5 13a1.5 1.5 0 1 1-3 0 1.5 1.5 0 0 1 3 0zm0-5a1.5 1.5 0 1 1-3 0 1.5 1.5 0 0 1 3 0zm0-5a1.5 1.5 0 1 1-3 0 1.5 1.5 0 0 1 3 0z" />
+                        </svg>
+                    </span>
+                </div>
+            </div>
+            
+            
+        </div>
+
+
+        <div class="row" >
+            <div class="col-md-4 contacts">
+                <div class="message-table-scroll" style="height: 460px;">
+                    <table class="table table-hover">
+                        <tbody>
+                            {% for user in users %}
+                                <tr>
+                                    <td><img src="{% static 'assets/dp.png' %}" alt="" class="profile-image rounded-circle"></td>
+                                    {% if user.userprofile.online_status %}
+                                        <td><a style="color: green" id="{{user.username}}_status" href="{% url 'app:main-chat' username=user.username %}">{{user.last_name}}</a></td>
+                                    {% else %}
+                                        <td><a style="color: grey" id="{{user.username}}_status" href="{% url 'app:main-chat' username=user.username %}">{{user.last_name}}</a></td>
+                                    {% endif %}
+                                    <td>
+                                        {% if user.notification_count > 0 %}
+                                        <i class="">
+                                            <small id="count">{{ user.notification_count }}</small>
+                                        </i>
+                                    {% endif %}                          
+                                        </tr>
+                            {% endfor %}
+                        </tbody>
+                        
+
+                        
+                    </table>z
+                </div>
+            </div>
+            
+            <div class="col-md-8 message-area">
+                <div class="message-table-scroll" style="height: 460px;">
+                    <table class="table">
+                        <tbody id='chat-body'>
+                            {% for message in messages %}
+                            {% if message.sender == request.user.username %}
+                            <tr>
+                                <td>
+                                    <p class=" p-2 mt-2 rounded">
+                                        <span class="bg-primary p-2 text-white rounded">{{message.message}}</span>
+                                    </p>
+                                </td>
+                                <td>
+                                    <p><small class="p-1 shadow-sm">{{message.date|time:'H:i'}}</small>
+                                    </p>
+                                </td>
+                            </tr>
+                            {% else %}
+                            <tr>
+                                <td>
+                                    <p class="p-2 mt-2 rounded">
+                                        <span class="bg-success p-2 text-white rounded">{{message.message}}</span>
+                                    </p>
+                                </td>
+                                <td>
+                                    <p><small class="p-1 shadow-sm">{{message.date|time:'H:i'}}</small>
+                                    </p>
+                                </td>
+                            </tr>
+                            {% endif %}
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                    
+                </div>
+                <div class="row message-box p-3">
+                    <div class="col-sm-2 mt-2">
+                        <svg width="1em" height="1em" viewBox="0 0 16 16" class="bi bi-emoji-smile" fill="currentColor"
+                            xmlns="http://www.w3.org/2000/svg">
+                            <path fill-rule="evenodd"
+                                d="M8 15A7 7 0 1 0 8 1a7 7 0 0 0 0 14zm0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16z" />
+                            <path fill-rule="evenodd"
+                                d="M4.285 9.567a.5.5 0 0 1 .683.183A3.498 3.498 0 0 0 8 11.5a3.498 3.498 0 0 0 3.032-1.75.5.5 0 1 1 .866.5A4.498 4.498 0 0 1 8 12.5a4.498 4.498 0 0 1-3.898-2.25.5.5 0 0 1 .183-.683z" />
+                            <path
+                                d="M7 6.5C7 7.328 6.552 8 6 8s-1-.672-1-1.5S5.448 5 6 5s1 .672 1 1.5zm4 0c0 .828-.448 1.5-1 1.5s-1-.672-1-1.5S9.448 5 10 5s1 .672 1 1.5z" />
+                        </svg>
+                        <svg width="1em" height="1em" viewBox="0 0 16 16" class="bi bi-paperclip mx-2"
+                            fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+                            <path fill-rule="evenodd"
+                                d="M4.5 3a2.5 2.5 0 0 1 5 0v9a1.5 1.5 0 0 1-3 0V5a.5.5 0 0 1 1 0v7a.5.5 0 0 0 1 0V3a1.5 1.5 0 1 0-3 0v9a2.5 2.5 0 0 0 5 0V5a.5.5 0 0 1 1 0v7a3.5 3.5 0 1 1-7 0V3z" />
+                        </svg>
+                        <svg width="1em" height="1em" viewBox="0 0 16 16" class="bi bi-cash" fill="currentColor"
+                            xmlns="http://www.w3.org/2000/svg">
+                            <path fill-rule="evenodd"
+                                d="M15 4H1v8h14V4zM1 3a1 1 0 0 0-1 1v8a1 1 0 0 0 1 1h14a1 1 0 0 0 1-1V4a1 1 0 0 0-1-1H1z" />
+                            <path
+                                d="M13 4a2 2 0 0 0 2 2V4h-2zM3 4a2 2 0 0 1-2 2V4h2zm10 8a2 2 0 0 1 2-2v2h-2zM3 12a2 2 0 0 0-2-2v2h2zm7-4a2 2 0 1 1-4 0 2 2 0 0 1 4 0z" />
+                        </svg>
+                    </div>
+                    <div class="col-sm-8">
+                        <input type="text" class="form-control" id="message_input" placeholder="Write message...">
+                    </div>
+                    <div class="col-sm-2 mt-1">
+                        <div class="control">
+                            <button class="btn btn-success" id="chat-message-submit">Submit</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+{{user.id|json_script:"json-username"}}
+{{user.username|json_script:"json-username-receiver"}}
+{{request.user.username|json_script:"json-message-username"}}
+
+<script src="{% static 'js/chattt.js' %}"></script>
+<script src="{% static 'js/status.js' %}"></script>
+<script src="{% static 'js/notification.js' %}"></script>
+
+{% endblock %}
+
+
